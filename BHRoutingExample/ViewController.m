@@ -23,6 +23,7 @@
 {
     [super viewDidLoad];
     
+    //Set inital zoom level
     CLLocationCoordinate2D zoomLocation;
     zoomLocation.latitude =  35.281137;
     zoomLocation.longitude= -120.660484;
@@ -31,6 +32,8 @@
 
     [_areaView setRegion:viewRegion animated:YES];
     
+    
+    //Set up annotation data
     CLLocationCoordinate2D morroStrand;
     morroStrand.latitude = 35.399284;
     morroStrand.longitude = -120.867930;
@@ -43,11 +46,12 @@
     pismoBeach.latitude = 35.135388;
     pismoBeach.longitude = -120.640977;
     
-    
+    //Create MKPinAnnotationView's
     BeachLocation *morro = [[BeachLocation alloc]initWithName:@"Morro Strand State Beach" address:@"Hwy 1 @ Beachcomber Dr" coordinate:morroStrand];
     BeachLocation *avila = [[BeachLocation alloc] initWithName:@"Avila Beach" address:@"San Miguel x Front St." coordinate:avilaBeach];
     BeachLocation *pismo = [[BeachLocation alloc] initWithName:@"Pismo Beach" address:@"End of Addie St." coordinate:pismoBeach];
     
+    //Place MKPinAnnotationView's in an array
     _beachLocations = [[NSArray alloc] initWithObjects:morro, avila, pismo, nil];
 
     
@@ -68,8 +72,10 @@
     
     static NSString *annotationIdentifier = @"AnnotationIdentifier";
     
+    
     BeachLocation *pinView = (BeachLocation *) [_areaView dequeueReusableAnnotationViewWithIdentifier:annotationIdentifier];
     
+    //If not already instatiated, create MKPinAnnotation
     if (!pinView)
     {
         pinView = [[BeachLocation alloc]
@@ -80,6 +86,7 @@
         pinView.animatesDrop = YES;
         pinView.canShowCallout = YES;
         
+        //Add right callout accessory view with custom image
         UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 34, 19)];
         [button setImage:[UIImage imageNamed:@"16-car.png"] forState:UIControlStateNormal];
         pinView.rightCalloutAccessoryView = button;
@@ -94,18 +101,22 @@
     return pinView; 
 }
 
+
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
     
+    
+    //get ending coordinate from selected pin annotation
     CLLocationCoordinate2D endingCoord;
     endingCoord.latitude = [[_areaView.selectedAnnotations objectAtIndex:0]coordinate].latitude;
     endingCoord.longitude = [[_areaView.selectedAnnotations objectAtIndex:0]coordinate].longitude;
     
     MKPlacemark *endLocation = [[MKPlacemark alloc] initWithCoordinate:endingCoord addressDictionary:nil];
     
+    //adds location name to the ending point for diplay in the Maps App
     MKMapItem *endingItem = [[MKMapItem alloc] initWithPlacemark:endLocation];
     endingItem.name = [[_areaView.selectedAnnotations objectAtIndex:0]name];
     
-    //using Apple Maps
+    //using Apple Maps- launches saying we want driving directions
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     [launchOptions setObject:MKLaunchOptionsDirectionsModeDriving forKey:MKLaunchOptionsDirectionsModeKey];
     [endingItem openInMapsWithLaunchOptions:launchOptions];
@@ -121,7 +132,7 @@
 
 -(void)zoomToFitAnnotations {
     
-    
+    //Sets zoom area to fit all annotations
     MKMapRect zoomRect = MKMapRectNull;
     for (id <MKAnnotation> annotation in _areaView.annotations)
         
@@ -133,12 +144,12 @@
     
     double inset = -zoomRect.size.width * 0.2;
     [_areaView setVisibleMapRect:MKMapRectInset(zoomRect, inset, inset) animated:YES];
-  //  [_areaView setVisibleMapRect:zoomRect animated:YES];
     
 }
 
 -(void)zoomToFitUserLocation{
     
+    //Sets zoom area to fit users location
     MKMapRect zoomRect = MKMapRectNull;
 
         MKMapPoint annotationPoint = MKMapPointForCoordinate(_areaView.userLocation.coordinate);
@@ -148,8 +159,6 @@
     double inset = -zoomRect.size.width * 0.5;
     [_areaView setVisibleMapRect:MKMapRectInset(zoomRect, inset, inset) animated:YES];
 
-    
-    
 }
 
 
@@ -167,7 +176,7 @@
 }
 
 - (void)locationUpdate:(CLLocation*)location {
-    
+    //if an action should take place when the user location is updated, add code here
 }
 
 @end

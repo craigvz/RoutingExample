@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 blueHulaStudios. All rights reserved.
 //
 
+//Singleton class which can be used to obtain user location information
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
@@ -15,8 +16,8 @@
 
 - (void)locationUpdate:(CLLocation*)location;
 
-
 @end
+
 
 @interface BHLocationManager : NSObject <CLLocationManagerDelegate>
 
